@@ -130,6 +130,9 @@ def partition_name(disk, partition_number):
 
 def main():
     """Install golden OS image (e.g. generated with mmdebstrap) on a disk (e.g. SD card)."""
+    # TODO: split long main function into smaller parts
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-n", "--dry-run", action="store_true",
                         help="Just print the commands, but do not execute them.")
