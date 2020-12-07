@@ -1,0 +1,75 @@
+mmdebstrap:
+  architectures:
+  - arm64
+  cleanup-hooks:
+  - cp /dev/null "$1/etc/hostname"
+  - if test -f "$1/etc/resolv.conf"; then cp /dev/null "$1/etc/resolv.conf"; fi
+  components:
+  - main
+  - contrib
+  - non-free
+  customize-hooks:
+  # Network: Use DHCP
+  - printf "\nauto lo\niface lo inet loopback\n\nallow-hotplug eth0\niface eth0 inet dhcp\n" >> "$1/etc/network/interfaces"
+  # Set 'debian' as password. Create a proper root password with "openssl passwd -6 $password"!
+  - chroot "$1" usermod -p '$6$ojM9XUz3tre8c/Ah$gBBIjy5zyhFMtJnQmK3YYXL8APHk9gTz.hlQP6AZnLV79bkQddUqOnTpcltEW.7l/OAq4u5.SMgDq1LL8u6BM/' root
+  # Update APT cache to update command-not-found database
+  - chroot "$1" apt-get update
+  keyrings:
+  - /usr/share/keyrings/debian-archive-keyring.gpg
+  mode: unshare
+  packages:
+  # Raspberry Pi 3 specific
+  - firmware-brcm80211 # contains /lib/firmware/brcm/brcmfmac43430-sdio.bin (required for WiFi)
+  - linux-image-arm64
+  - raspi3-firmware
+  # install packages from priority important (aptitude search '~pimportant' -F'%p')
+  - adduser
+  - bsdmainutils
+  - cron
+  - debian-archive-keyring
+  - fdisk
+  - gpgv
+  - ifupdown
+  - init
+  - iproute2
+  - iputils-ping
+  - isc-dhcp-client
+  - less
+  - logrotate
+  - nano
+  - procps
+  - rsyslog
+  - sensible-utils
+  - udev
+  - whiptail
+  # install packages from priority standard (aptitude search '~pstandard' -F'%p')
+  - bash-completion
+  - bind9-host
+  - bzip2
+  - file
+  - locales
+  - lsof
+  - man-db
+  - manpages
+  - openssh-client
+  - traceroute
+  - wget
+  - xz-utils
+  # basic stuff
+  - command-not-found
+  - console-data
+  - htop
+  - kbd # for loadkeys
+  - libpam-systemd # recommended by systemd and needed to not run into https://bugs.debian.org/751636
+  - openssh-server
+  - rng-tools5
+  - rsync
+  - sudo
+  - usbutils
+  - vim
+  - wireless-tools
+  - wpasupplicant
+  suite: buster
+  target: root.tar.xz
+  variant: minbase
